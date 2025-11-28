@@ -1,7 +1,7 @@
-
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { AuthContext, DataContext } from '../../contexts/AppProviders';
 import type { UserRole } from '../../types';
+import ParticleBackground from '../common/ParticleBackground'; // Updated Import
 
 // --- 3D COMPONENTS ---
 
@@ -39,7 +39,7 @@ const TactileInput = ({
       type={type}
       value={value}
       onChange={onChange}
-      className="block w-full pl-12 pr-4 py-4 bg-[#0a0f1c] text-gray-100 rounded-xl border-0 ring-1 ring-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),inset_0_-1px_1px_rgba(255,255,255,0.05)] focus:ring-2 focus:ring-cyan-500/50 focus:shadow-[inset_0_2px_10px_rgba(0,0,0,1),0_0_20px_rgba(34,211,238,0.2)] transition-all duration-300 placeholder-gray-600 font-medium"
+      className="block w-full pl-12 pr-4 py-4 bg-[#0a0f1c]/90 text-gray-100 rounded-xl border-0 ring-1 ring-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8),inset_0_-1px_1px_rgba(255,255,255,0.05)] focus:ring-2 focus:ring-cyan-500/50 focus:shadow-[inset_0_2px_10px_rgba(0,0,0,1),0_0_20px_rgba(34,211,238,0.2)] transition-all duration-300 placeholder-gray-600 font-medium"
       placeholder={placeholder}
       required
     />
@@ -112,7 +112,6 @@ const AuthPage: React.FC = () => {
     // Unified Login Handler
     const handleLogin = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-        // Login logic is agnostic of role, it just checks credentials
         login(username, password);
     }, [username, password, login]);
 
@@ -149,9 +148,9 @@ const AuthPage: React.FC = () => {
 
     return (
         <div id="auth-page" className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-[#050b14] perspective-1000">
-            {/* Ambient Background */}
+            {/* Dynamic Backgrounds */}
+            <ParticleBackground />
             <GlowingOrb />
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
             
             {/* Main Holographic Console */}
             <div 
@@ -159,7 +158,7 @@ const AuthPage: React.FC = () => {
                 style={{ perspective: '2000px' }}
             >
                 {/* Glass Panel Effect */}
-                <div className="relative z-10 bg-gray-900/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_20px_rgba(255,255,255,0.05)] overflow-hidden">
+                <div className="relative z-10 bg-gray-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_20px_rgba(255,255,255,0.05)] overflow-hidden">
                     
                     {/* Top Shine */}
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-50"></div>
