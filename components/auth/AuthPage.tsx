@@ -35,9 +35,10 @@ const AuthPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [registerError, setRegisterError] = useState<string | null>(null);
+    const [pendingLogin, setPendingLogin] = useState<{user: string, pass: string} | null>(null);
 
     const { login, error: authError } = useContext(AuthContext)!;
-    const { registerUser } = useContext(DataContext)!;
+    const { db, registerUser } = useContext(DataContext)!;
 
     const getRoleFromMode = useCallback((): UserRole => {
         if (authMode === 'STUDENT') return 'STUDENT';
@@ -71,12 +72,20 @@ const AuthPage: React.FC = () => {
         try {
             const role = getRoleFromMode();
             registerUser(username, password, name, role);
-            alert("Đăng ký thành công! Đang đăng nhập...");
-            login(username, password);
+            // Set pending login state to trigger auto-login via useEffect once DB updates
+            setPendingLogin({ user: username, pass: password });
         } catch (err) {
             setRegisterError(err instanceof Error ? err.message : "Lỗi đăng ký không xác định.");
         }
-    }, [username, password, name, getRoleFromMode, registerUser, login]);
+    }, [username, password, name, getRoleFromMode, registerUser]);
+
+    // Automatically login after successful registration propagation
+    useEffect(() => {
+        if (pendingLogin && db.USERS[pendingLogin.user]) {
+            login(pendingLogin.user, pendingLogin.pass);
+            setPendingLogin(null);
+        }
+    }, [db.USERS, pendingLogin, login]);
 
     useEffect(() => {
         if (authMode === 'ADMIN' && mode === 'register') {
@@ -129,7 +138,9 @@ const AuthPage: React.FC = () => {
                         {authError && mode === 'login' && <p className="text-sm text-red-500 text-center">{authError}</p>}
                         {registerError && mode === 'register' && <p className="text-sm text-red-500 text-center">{registerError}</p>}
 
-                        <button type="submit" className="btn btn-primary w-full">{mode === 'login' ? 'Đăng nhập' : 'Đăng ký'}</button>
+                        <button type="submit" className="btn btn-primary w-full" disabled={pendingLogin !== null}>
+                            {pendingLogin ? 'Đang xử lý...' : (mode === 'login' ? 'Đăng nhập' : 'Đăng ký')}
+                        </button>
                     </form>
                 </div>
             </div>

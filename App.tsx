@@ -110,7 +110,7 @@ const Header: React.FC = () => {
              🌌
           </div>
           <h1 className="text-xl font-bold text-white tracking-wide drop-shadow-md hidden sm:block">
-             HỌC VIỆN <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">NGÂN HÀNG SỐ</span>
+             EDULEARN <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">(By Quang)</span>
           </h1>
        </div>
 

@@ -20,10 +20,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     const testTimeoutRef = useRef<Record<string, number>>({});
 
     const registerUser = useCallback((id: string, password: string, name: string, role: UserRole) => {
+        // Check if user exists BEFORE calling setDb to ensure error is thrown to caller
+        if (db.USERS[id]) {
+            throw new Error("Tài khoản này đã có người đăng ký.");
+        }
+
         setDb(prevDb => {
-            if (prevDb.USERS[id]) {
-                throw new Error("User ID đã tồn tại.");
-            }
             const newUser: User = { id, password, name, role, isLocked: false, apiKey: null, hasSeenOnboarding: false };
             const newDb = JSON.parse(JSON.stringify(prevDb)) as Database;
             newDb.USERS[id] = newUser;
@@ -43,7 +45,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             });
             return newDb;
         });
-    }, []);
+    }, [db]);
 
     const toggleUserLock = useCallback((userId: string) => {
         setDb(prevDb => {
