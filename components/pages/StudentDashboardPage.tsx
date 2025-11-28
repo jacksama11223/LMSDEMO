@@ -111,33 +111,33 @@ const StudentDashboardPage: React.FC = () => {
     if (!user) return null;
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
             {/* HERO ISLAND */}
-            <div id="dashboard-hero" className="relative rounded-[3rem] p-12 overflow-hidden bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-white/30 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] group hover:scale-[1.01] transition-transform duration-700">
+            <div id="dashboard-hero" className="relative rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 overflow-hidden bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-white/30 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] group hover:scale-[1.01] transition-transform duration-700">
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-pink-400/20 to-blue-400/20 rounded-full blur-[100px] animate-pulse"></div>
                 
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
-                    <div className="space-y-6 max-w-2xl">
-                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-blue-200 text-xs font-bold tracking-widest shadow-inner">
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-10">
+                    <div className="space-y-4 md:space-y-6 max-w-2xl text-center md:text-left">
+                         <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 border border-white/20 text-blue-200 text-[10px] md:text-xs font-bold tracking-widest shadow-inner">
                             <span>🚀</span> PHI HÀNH GIA CẤP ĐỘ 1
                          </div>
-                         <h1 className="text-6xl font-black text-white leading-tight drop-shadow-lg">
+                         <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-lg">
                             {greeting}, <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-pink-300 filter drop-shadow-sm">
                                 {user.name}
                             </span>
                          </h1>
-                         <p className="text-blue-100 text-xl font-light">
+                         <p className="text-blue-100 text-base md:text-xl font-light">
                             Bầu trời tri thức đang chờ bạn khám phá. Hãy bắt đầu hành trình hôm nay!
                          </p>
-                         <div className="flex gap-4 pt-4">
-                            <button id="hero-continue-btn" onClick={() => navigate('assignment_hub')} className="btn btn-primary px-10 py-4 text-lg rounded-full shadow-[0_10px_30px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.6)]">
+                         <div className="flex gap-4 pt-4 justify-center md:justify-start">
+                            <button id="hero-continue-btn" onClick={() => navigate('assignment_hub')} className="btn btn-primary px-8 md:px-10 py-3 md:py-4 text-base md:text-lg rounded-full shadow-[0_10px_30px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.6)]">
                                 🌟 Tiếp Tục Hành Trình
                             </button>
                          </div>
                     </div>
                     
-                    {/* Floating 3D Element */}
+                    {/* Floating 3D Element (Hidden on mobile to save space) */}
                     <div className="hidden lg:block relative w-80 h-80 animate-float">
                         <div className="absolute inset-0 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-full opacity-20 blur-3xl"></div>
                         <div className="absolute inset-10 bg-white/10 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center shadow-2xl">
@@ -150,10 +150,10 @@ const StudentDashboardPage: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* LEFT COLUMN: COURSES */}
-                <div className="lg:col-span-8 space-y-8">
+                <div className="lg:col-span-8 space-y-6 md:space-y-8">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <span className="text-4xl">🔭</span> Các Điểm Đến (Khóa học)
+                        <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                            <span className="text-3xl md:text-4xl">🔭</span> Các Điểm Đến (Khóa học)
                         </h2>
                         <div className="h-px flex-1 bg-gradient-to-r from-white/30 to-transparent"></div>
                     </div>
@@ -163,16 +163,16 @@ const StudentDashboardPage: React.FC = () => {
                             <div 
                                 key={course.id} 
                                 onClick={() => navigate('course_detail', { courseId: course.id })}
-                                className="card p-8 group cursor-pointer hover:bg-white/10 transition-all duration-500"
+                                className="card p-6 md:p-8 group cursor-pointer hover:bg-white/10 transition-all duration-500"
                             >
                                 <div className="flex justify-between items-start mb-6">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-white/20 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-white/20 flex items-center justify-center text-2xl md:text-3xl shadow-inner group-hover:scale-110 transition-transform">
                                         📚
                                     </div>
                                     <span className="px-3 py-1 rounded-lg bg-black/20 text-xs font-mono text-blue-200">{course.id}</span>
                                 </div>
                                 
-                                <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">{course.name}</h3>
+                                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors line-clamp-1">{course.name}</h3>
                                 <p className="text-sm text-gray-300 mb-6 flex items-center gap-2">
                                     <span>👨‍🏫</span> {course.teacher}
                                 </p>
@@ -197,17 +197,17 @@ const StudentDashboardPage: React.FC = () => {
                 </div>
 
                 {/* RIGHT COLUMN: STATS & DATA */}
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-4 space-y-6 md:space-y-8">
                     {/* Gamification Treasure Chest */}
-                    <div id="treasure-chest" className="card p-8 border-yellow-400/30 bg-gradient-to-b from-yellow-900/10 to-transparent relative overflow-hidden group">
+                    <div id="treasure-chest" className="card p-6 md:p-8 border-yellow-400/30 bg-gradient-to-b from-yellow-900/10 to-transparent relative overflow-hidden group">
                         <div className="absolute -right-12 -top-12 w-40 h-40 bg-yellow-500/30 rounded-full blur-[60px] group-hover:blur-[80px] transition-all"></div>
                         
-                        <h3 className="text-xl font-bold text-yellow-100 mb-6 flex items-center gap-3">
+                        <h3 className="text-lg md:text-xl font-bold text-yellow-100 mb-6 flex items-center gap-3">
                             <span className="text-2xl">🏆</span> KHO BÁU CỦA BẠN
                         </h3>
                         
                         {/* Stats Row */}
-                        <div className="flex items-stretch gap-4 mb-6">
+                        <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-6">
                             <div className="flex-1 bg-black/20 p-4 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col justify-center">
                                 <p className="text-[10px] text-yellow-200/70 uppercase font-bold tracking-wider mb-1">TỔNG KINH NGHIỆM</p>
                                 <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">

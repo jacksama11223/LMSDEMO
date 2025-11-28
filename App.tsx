@@ -1,139 +1,130 @@
-import React, { useContext, useMemo, useEffect, useState } from 'react';
-import {
-  AuthContext, DataContext, GlobalStateContext, PageContext,
-  AuthProvider, DataProvider, GlobalStateProvider, PageProvider
-} from './contexts/AppProviders';
-import { useFeatureFlag } from './hooks/useAppHooks';
-import AuthPage from './components/auth/AuthPage';
-import LockoutScreen from './components/auth/LockoutScreen';
-import NotificationBell from './components/common/NotificationBell';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
+import { AuthContext, DataContext, GlobalStateContext, PageContext, DataProvider, AuthProvider, GlobalStateProvider, PageProvider } from './contexts/AppProviders';
 import GlobalStyles from './components/common/GlobalStyles';
+import NotificationBell from './components/common/NotificationBell';
 import GeminiAPIKeyModal from './components/modals/GeminiAPIKeyModal';
+import OnboardingTour, { TourStep } from './components/common/OnboardingTour';
+import LockoutScreen from './components/auth/LockoutScreen';
+import AuthPage from './components/auth/AuthPage';
+
 import StudentDashboardPage from './components/pages/StudentDashboardPage';
 import TeacherDashboardPage from './components/pages/TeacherDashboardPage';
 import AdminDashboardPage from './components/pages/AdminDashboardPage';
 import CourseDetailPage from './components/pages/CourseDetailPage';
 import LessonPage from './components/pages/LessonPage';
 import AssignmentHubPage from './components/pages/AssignmentHubPage';
-import AssignmentCreatorPage from './components/pages/AssignmentCreatorPage';
-import AssignmentViewerPage from './components/pages/AssignmentViewerPage';
-import GradebookPage from './components/pages/GradebookPage';
 import ChatPage from './components/pages/ChatPage';
-import GroupChatPage from './components/pages/GroupChatPage';
-import GeminiTeacherPage from './components/pages/GeminiTeacherPage';
-import GeminiStudentPage from './components/pages/GeminiStudentPage';
 import ApiKeyPage from './components/pages/ApiKeyPage';
+import AssignmentViewerPage from './components/pages/AssignmentViewerPage';
+import GroupChatPage from './components/pages/GroupChatPage';
+import GeminiStudentPage from './components/pages/GeminiStudentPage';
+import AssignmentCreatorPage from './components/pages/AssignmentCreatorPage';
+import GradebookPage from './components/pages/GradebookPage';
+import GeminiTeacherPage from './components/pages/GeminiTeacherPage';
 import AdminResiliencePage from './components/pages/AdminResiliencePage';
 import DeploymentPage from './components/pages/DeploymentPage';
 import SecurityPage from './components/pages/SecurityPage';
 import LearningPathCreatorPage from './components/pages/LearningPathCreatorPage';
 import LearningPathDetailPage from './components/pages/LearningPathDetailPage';
 import LearningNodeStudyPage from './components/pages/LearningNodeStudyPage';
-import OnboardingTour, { TourStep } from './components/common/OnboardingTour';
 
-// --- Floating Cloud Sidebar ---
-const Sidebar: React.FC = () => {
+const Navigation: React.FC = () => {
   const { user } = useContext(AuthContext)!;
-  const { page, navigate } = useContext(PageContext)!;
-  const { serviceStatus } = useContext(GlobalStateContext)!;
+  const { page, setPage } = useContext(GlobalStateContext)!;
+  const { navigate } = useContext(PageContext)!;
 
-  const isChatEnabled = useFeatureFlag('v2_chat');
-  const isGroupsEnabled = useFeatureFlag('v5_groups');
-
-  const navItems = useMemo(() => {
-    let baseItems: { id: string; name: string; icon: string }[] = [];
-    const isAiOk = serviceStatus.ai_tutor_service === 'OPERATIONAL' || serviceStatus.ai_assistant_service === 'OPERATIONAL';
-
+  const menuItems = useMemo(() => {
+    const common = [
+      { id: 'dashboard', label: 'Trạm Vũ Trụ', icon: '🚀' },
+      { id: 'chat', label: 'Liên Lạc', icon: '📡' },
+    ];
+    
     if (user?.role === 'STUDENT') {
-      baseItems = [
-        { id: 'dashboard', name: 'Trạm Vũ Trụ', icon: '🪐' },
-        { id: 'assignment_hub', name: 'Cây Tri Thức', icon: '🌳' },
-        ...(isAiOk ? [{ id: 'gemini_student', name: 'Nhà Tiên Tri', icon: '🔮' }] : []),
+      return [
+        ...common,
+        { id: 'assignment_hub', label: 'Cây Tri Thức', icon: '🌳' },
+        { id: 'group_chat', label: 'Phi Đội', icon: '🛸' },
+        { id: 'gemini_student', label: 'Nhà Tiên Tri', icon: '🔮' },
       ];
-      if (isChatEnabled) baseItems.push({ id: 'chat', name: 'Liên lạc', icon: '📡' });
-      if (isGroupsEnabled) baseItems.push({ id: 'group_chat', name: 'Phi đội', icon: '🪁' });
     } else if (user?.role === 'TEACHER') {
-       baseItems = [
-        { id: 'dashboard', name: 'Đài Chỉ Huy', icon: '🔭' },
-        { id: 'assignment_hub', name: 'Lớp Học', icon: '📚' },
-        ...(isAiOk ? [{ id: 'gemini_teacher', name: 'Trợ Lý Ảo', icon: '🤖' }] : []),
+      return [
+        ...common,
+        { id: 'assignment_hub', label: 'Quản lý Bài tập', icon: '📋' },
+        { id: 'gemini_teacher', label: 'Trợ giảng AI', icon: '🤖' },
       ];
     } else if (user?.role === 'ADMIN') {
-       baseItems = [
-        { id: 'dashboard', name: 'QA Hub', icon: '🎛️' },
-        { id: 'admin_resilience', name: 'Hệ thống', icon: '🔧' },
-        { id: 'deployment', name: 'Deploy', icon: '🚀' },
-        { id: 'security', name: 'An ninh', icon: '🛡️' },
+      return [
+        ...common,
+        { id: 'admin_resilience', label: 'Resilience', icon: '🔧' },
+        { id: 'deployment', label: 'Deployment', icon: '🚀' },
+        { id: 'security', label: 'Security', icon: '🛡️' },
       ];
     }
-    if (isAiOk) baseItems.push({ id: 'api_key', name: 'Key', icon: '🔑' });
-    return baseItems;
-  }, [user?.role, serviceStatus, isChatEnabled, isGroupsEnabled]);
+    return common;
+  }, [user]);
 
   return (
-    <aside id="main-sidebar" className="fixed left-6 top-1/2 transform -translate-y-1/2 w-20 flex flex-col items-center py-6 z-50">
-      {/* Floating Glass Pill Background */}
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.1)] -z-10"></div>
-      
-      <div className="mb-6 animate-float">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-2xl shadow-lg border-2 border-white/30">
-          🌌
-        </div>
-      </div>
-      
-      <div className="flex-1 w-full flex flex-col items-center space-y-6 px-2 justify-center">
-        {navItems.map(item => {
-           const isActive = page === item.id;
-           return (
-            <button
-              key={item.id}
-              id={`nav-${item.id}`}
-              onClick={() => navigate(item.id)}
-              className={`group relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
-                isActive 
-                  ? 'bg-white text-blue-600 shadow-[0_0_20px_rgba(255,255,255,0.6)] scale-110' 
-                  : 'text-white/70 hover:bg-white/20 hover:text-white hover:scale-110'
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              
-              {/* Cloud Tooltip */}
-              <div className="absolute left-full ml-5 px-4 py-2 bg-white/90 text-blue-900 font-bold text-xs rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pointer-events-none backdrop-blur-sm transform scale-90 group-hover:scale-100 origin-left">
-                {item.name}
-                <div className="absolute left-0 top-1/2 -ml-1.5 -mt-1.5 w-3 h-3 bg-white/90 transform rotate-45"></div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mt-6">
-         <div id="user-avatar" className="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 border-2 border-white/50 flex items-center justify-center text-white font-bold text-sm shadow-lg cursor-help" title={user?.name}>
-            {user?.name.charAt(0)}
+    <nav id="main-sidebar" className="fixed bottom-0 w-full md:top-0 md:left-0 md:w-28 md:h-screen bg-black/60 backdrop-blur-xl border-t md:border-t-0 md:border-r border-white/10 z-50 flex md:flex-col justify-around md:justify-start py-2 md:py-8 transition-all duration-300">
+      <div className="hidden md:flex flex-col items-center mb-8">
+         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+            🌌
          </div>
       </div>
-    </aside>
+      
+      {menuItems.map(item => (
+        <button
+          key={item.id}
+          id={`nav-${item.id}`}
+          onClick={() => navigate(item.id)}
+          className={`flex flex-col items-center justify-center w-full md:h-20 p-2 gap-1 transition-all duration-300 relative group
+            ${page === item.id 
+              ? 'text-blue-400' 
+              : 'text-gray-400 hover:text-white'
+            }`}
+        >
+          {page === item.id && (
+             <div className="absolute top-0 left-0 w-full h-0.5 md:w-0.5 md:h-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"></div>
+          )}
+          <span className={`text-2xl transition-transform duration-300 ${page === item.id ? 'scale-110 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]' : 'group-hover:scale-110'}`}>
+            {item.icon}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider opacity-80 hidden md:block">{item.label}</span>
+        </button>
+      ))}
+    </nav>
   );
 };
 
 const Header: React.FC = () => {
-  const { logout, user } = useContext(AuthContext)!;
-  const { setPage: setGlobalPage } = useContext(GlobalStateContext)!;
+  const { user, logout } = useContext(AuthContext)!;
+  const { page, setPage } = useContext(GlobalStateContext)!;
 
   return (
-    <header className="fixed top-6 right-8 left-32 h-16 flex items-center justify-between z-40 pointer-events-none">
-      <div className="pointer-events-auto px-6 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-          <h2 className="text-blue-100 text-sm font-bold tracking-widest uppercase flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            LMS STARLINK <span className="text-pink-300">//</span> {user?.role}
-          </h2>
-      </div>
-      <div className="flex items-center space-x-4 pointer-events-auto">
-        <button id="header-settings" onClick={() => setGlobalPage('api_key', { isApiKeyModalOpen: true })} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white hover:bg-white/20 transition-all">
-           <span className="text-lg">⚙️</span>
+    <header className="fixed top-0 left-0 md:left-28 right-0 h-20 bg-transparent z-40 flex items-center justify-between px-6 md:px-10 pointer-events-none">
+       {/* Background Blur for Header */}
+       <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-transparent pointer-events-none"></div>
+
+       <div className="relative pointer-events-auto flex items-center gap-3">
+          {/* Mobile Logo */}
+          <div className="md:hidden w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-lg shadow-lg">
+             🌌
+          </div>
+          <h1 className="text-xl font-bold text-white tracking-wide drop-shadow-md hidden sm:block">
+             HỌC VIỆN <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">NGÂN HÀNG SỐ</span>
+          </h1>
+       </div>
+
+       <div className="relative pointer-events-auto flex items-center gap-4 md:gap-6">
+        <button 
+          id="header-settings"
+          onClick={() => setPage('api_key', { isApiKeyModalOpen: true })}
+          className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all hover:scale-105"
+          title="Cài đặt API Key"
+        >
+          🔑
         </button>
         <div id="header-notif" className="pointer-events-auto"><NotificationBell /></div>
-        <button onClick={logout} className="btn btn-danger text-xs px-6 py-2 rounded-full shadow-lg">
+        <button onClick={logout} className="btn btn-danger text-[10px] md:text-xs px-4 md:px-6 py-2 rounded-full shadow-lg">
           THOÁT
         </button>
       </div>
@@ -254,10 +245,14 @@ const AppLayout: React.FC = () => {
             <div className="cloud w-[400px] h-[400px] bottom-[10%] right-[-10%] opacity-40 duration-[70s]"></div>
        </div>
 
-       <Sidebar />
+       <Navigation />
        <Header />
        
-       <main className="pl-36 pr-8 pt-28 pb-12 min-h-screen relative z-10 transition-all duration-500">
+       {/* Adjusted main padding: 
+           Desktop: pl-36 (for sidebar), pt-28 (for header)
+           Mobile: pl-4, pt-24 (smaller header), pb-24 (for bottom nav)
+       */}
+       <main className="md:pl-36 md:pr-8 px-4 pt-24 md:pt-28 pb-24 md:pb-12 min-h-screen relative z-10 transition-all duration-500">
           <div className="max-w-7xl mx-auto animate-fade-in-up">
              <PageRouter />
           </div>
