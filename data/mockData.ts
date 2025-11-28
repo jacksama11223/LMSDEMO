@@ -4,7 +4,7 @@ export const MOCK_DATA: Database = {
   // --- Người dùng & Xác thực ---
   USERS: {
     "sv001": { id: "sv001", password: "1", name: "Hoàng Đăng Quang", role: "STUDENT", isLocked: false, apiKey: null, squadronId: 'g2', hasSeenOnboarding: false },
-    "gv001": { id: "gv001", password: "1", name: "Nguyễn Trùng Lập", role: "TEACHER", isLocked: false, apiKey: null, hasSeenOnboarding: false },
+    "gv001": { id: "gv001", password: "1", name: "Nguyễn Đăng Bắc", role: "TEACHER", isLocked: false, apiKey: null, hasSeenOnboarding: false },
     "qt001": { id: "qt001", password: "1", name: "Hoàng Đăng Quang", role: "ADMIN", isLocked: false, apiKey: null, hasSeenOnboarding: false },
     "sv002": { id: "sv002", password: "1", name: "Lê Thị C", role: "STUDENT", isLocked: false, apiKey: null, squadronId: 'g1', hasSeenOnboarding: false },
     "sv003": { id: "sv003", password: "1", name: "Phạm Văn D", role: "STUDENT", isLocked: false, apiKey: null, squadronId: 'g2', hasSeenOnboarding: false },
@@ -13,8 +13,8 @@ export const MOCK_DATA: Database = {
   // --- Khóa học & Cấu trúc ---
   COURSES: [
     { id: "CS101", name: "Nhập môn Trí tuệ Nhân tạo", teacher: "Nguyễn Trùng Lập" },
-    { id: "CS202", name: "Kiến trúc Phần mềm", teacher: "Hàng Anh Kiệt" },
-    { id: "MA101", name: "Giải tích 1", teacher: "Lê Văn D" },
+    { id: "CS202", name: "Kiến trúc Phần mềm", teacher: "Nguyễn Đăng Bắc" },
+    { id: "MA101", name: "Giải tích 1", teacher: "Nguyễn Khắc Huy" },
   ],
   COURSE_STRUCTURE: {
     CS101: {
